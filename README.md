@@ -28,14 +28,20 @@ answered with the analysis framework.
 A. Policy 3 and Fail-safety Requirement 1
 
 Copy the template of the analysis question:
-```cp questions/pol3_fr1_template.fpl tmp.fpl```
+```
+cp questions/pol3_fr1_template.fpl tmp.fpl
+```
 
 Instantiate the template for a given domain of constants. E.g., to
 instantiate for 10 constants:
-```python code/qval_to_smt2.py -i tmp.fpl -o tmp.z3 -n 10```
+```
+python code/qval_to_smt2.py -i tmp.fpl -o tmp.z3 -n 10
+```
 
 Run the resulting file tmp.z3 with Z3:
-```z3 -smt2 tmp.z3```
+```
+z3 -smt2 tmp.z3
+```
 
 The output of Z3 should be "unsat", i.e. Z3 could not find a
 counter-example where the analysis question is answered negatively.
@@ -50,7 +56,9 @@ z3 -smt2 tmp.z3
 C. Policy 2 and Fail-safety requirement 3
 
 For the first question:
-```cp questions/pol2_fr3_direct_template.fpl tmp.fpl```
+```
+cp questions/pol2_fr3_direct_template.fpl tmp.fpl
+```
 To verify policy 2 there is an extra step that expands all possible
 delegation chains:
 ```
