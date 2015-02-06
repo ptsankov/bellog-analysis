@@ -1,0 +1,26 @@
+pol1(X) :- [![#[!chain(X)]]]
+chain(X) :- ownerTF(X)
+give(X,Y) :- grantTF(X,Y) ^ !revoked(X,Y)
+pol2(X) :- ownerTF(X)
+valid(X,Y) :- grantTF(X,Y) ^ else(X,Y)
+else(X,Y) :- revokedNotE(X,Y) ^ !revoked(X,Y)
+else(X,Y) :- !revokedNotE(X,Y) ^ ownerTF(X)
+revokedNotE(X,Y) :- [#[![revoked(X,Y) ^ !revoked(X,Y)]]]
+ownerTF(X) :- #owner(X)
+grantTF(X,Y) :- #grant(X,Y)
+pol1EqF(X) :- [#[!pol1(X)]]
+pol1EqE(X) :- [![#[![pol1(X) ^ !pol1(X)]]]]
+pol1EqT(X) :- #pol1(X)
+pol2EqF(X) :- [#[!pol2(X)]]
+pol2EqE(X) :- [![#[![pol2(X) ^ !pol2(X)]]]]
+pol2EqT(X) :- #pol2(X)
+pol1NeqPol2(X) :- pol1EqF(X) ^ pol2EqE(X)
+pol1NeqPol2(X) :- pol1EqF(X) ^ pol2EqT(X)
+pol1NeqPol2(X) :- pol1EqE(X) ^ pol2EqF(X)
+pol1NeqPol2(X) :- pol1EqE(X) ^ pol2EqT(X)
+pol1NeqPol2(X) :- pol1EqT(X) ^ pol2EqF(X)
+pol1NeqPol2(X) :- pol1EqT(X) ^ pol2EqE(X)
+revokedNeqT(X,Y) :- [![#revoked(X,Y)]]
+cond(X) :- ownerTF(Y) ^ grantTF(Y,X) ^ revokedNeqT(Y,X)
+test(m) :- cond(X) ^ pol1NeqPol2(X)
+check(m) :- !test(m)

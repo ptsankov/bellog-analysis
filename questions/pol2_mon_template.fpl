@@ -1,0 +1,53 @@
+pol1(X) :- owner1TF(X)
+valid1(X,Y) :- grant1TF(X,Y) ^ else1(X,Y)
+else1(X,Y) :- revokedNotE(X,Y) ^ !revoked(X,Y)
+else1(X,Y) :- !revokedNotE(X,Y) ^ owner1TF(X)
+revokedNotE(X,Y) :- [#[![revoked(X,Y) ^ !revoked(X,Y)]]]
+pol2(X) :- owner2TF(X)
+valid2(X,Y) :- grant2TF(X,Y) ^ else2(X,Y)
+else2(X,Y) :- revokedNotE(X,Y) ^ !revoked(X,Y)
+else2(X,Y) :- !revokedNotE(X,Y) ^ owner2TF(X)
+owner1TF(X) :- #owner1(X)
+owner2TF(X) :- #owner2(X)
+grant1TF(X,Y) :- #grant1(X,Y)
+grant2TF(X,Y) :- #grant2(X,Y)
+owner1EqF(X) :- [#[!owner1(X)]]
+owner1EqE(X) :- [![#[![owner1(X) ^ !owner1(X)]]]]
+owner1EqT(X) :- #owner1(X)
+owner2EqF(X) :- [#[!owner2(X)]]
+owner2EqE(X) :- [![#[![owner2(X) ^ !owner2(X)]]]]
+owner2EqT(X) :- #owner2(X)
+grant1EqF(X,Y) :- [#[!grant1(X,Y)]]
+grant1EqE(X,Y) :- [![#[![grant1(X,Y) ^ !grant1(X,Y)]]]]
+grant1EqT(X,Y) :- #grant1(X,Y)
+grant2EqF(X,Y) :- [#[!grant2(X,Y)]]
+grant2EqE(X,Y) :- [![#[![grant2(X,Y) ^ !grant2(X,Y)]]]]
+grant2EqT(X,Y) :- #grant2(X,Y)
+owner1LeqOwner2(X) :- owner1EqF(X) ^ owner2EqF(X)
+owner1LeqOwner2(X) :- owner1EqF(X) ^ owner2EqE(X)
+owner1LeqOwner2(X) :- owner1EqF(X) ^ owner2EqT(X)
+owner1LeqOwner2(X) :- owner1EqE(X) ^ owner2EqE(X)
+owner1LeqOwner2(X) :- owner1EqE(X) ^ owner2EqT(X)
+owner1LeqOwner2(X) :- owner1EqT(X) ^ owner2EqT(X)
+grant1LeqOwner2(X,Y) :- grant1EqF(X,Y) ^ grant2EqF(X,Y)
+grant1LeqOwner2(X,Y) :- grant1EqF(X,Y) ^ grant2EqE(X,Y)
+grant1LeqOwner2(X,Y) :- grant1EqF(X,Y) ^ grant2EqT(X,Y)
+grant1LeqOwner2(X,Y) :- grant1EqE(X,Y) ^ grant2EqE(X,Y)
+grant1LeqOwner2(X,Y) :- grant1EqE(X,Y) ^ grant2EqT(X,Y)
+grant1LeqOwner2(X,Y) :- grant1EqT(X,Y) ^ grant2EqT(X,Y)
+cond1(X) :- owner1LeqOwner2(X)
+cond2(X,Y) :- grant1LeqOwner2(X,Y)
+condMon(X,Y,Z) :- cond1(X) ^ cond2(Y,Z)
+condTmp(m) :- !condMon(X,Y,Z)
+cond(m) :- !condTmp(m)
+pol1EqF(X) :- [#[!pol1(X)]]
+pol1EqE(X) :- [![#[![pol1(X) ^ !pol1(X)]]]]
+pol1EqT(X) :- #pol1(X)
+pol2EqF(X) :- [#[!pol2(X)]]
+pol2EqE(X) :- [![#[![pol2(X) ^ !pol2(X)]]]]
+pol2EqT(X) :- #pol2(X)
+pol1GtPol2(m) :- pol1EqE(X) ^ pol2EqF(X)
+pol1GtPol2(m) :- pol1EqT(X) ^ pol2EqF(X)
+pol1GtPol2(m) :- pol1EqT(X) ^ pol2EqE(X)
+check(m) :- !cond(m)
+check(m) :- !pol1GtPol2(m)

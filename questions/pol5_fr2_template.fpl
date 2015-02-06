@@ -1,0 +1,30 @@
+pol1(X,Y) :- #fw_def(X,Y) ^ logging_TF(a)
+pol2(X,Y) :- fwNotE(X,Y) ^ fw(X,Y)
+pol2(X,Y) :- !fwNotE(X,Y) ^ handler(X,Y)
+fw(X,Y) :- fw_rs1(X,Y)
+fw(X,Y) :- fw_rs2(X,Y)
+fwNotE(X,Y) :- [#[![fw(X,Y) ^ !fw(X,Y)]]]
+handler(X,Y) :- #fw_def(X,Y) ^ logging_TF(a)
+logging_TF(a) :- #logging(a)
+fw_rs1F(X,Y) :- [#[!fw_rs1(X,Y)]]
+fw_rs1T(X,Y) :- #fw_rs1(X,Y)
+fw_rs2F(X,Y) :- [#[!fw_rs2(X,Y)]]
+fw_rs2T(X,Y) :- #fw_rs2(X,Y)
+pol1EqF(X,Y) :- [#[!pol1(X,Y)]]
+pol1EqE(X,Y) :- [![#[![pol1(X,Y) ^ !pol1(X,Y)]]]]
+pol1EqT(X,Y) :- #pol1(X,Y)
+pol2EqF(X,Y) :- [#[!pol2(X,Y)]]
+pol2EqE(X,Y) :- [![#[![pol2(X,Y) ^ !pol2(X,Y)]]]]
+pol2EqT(X,Y) :- #pol2(X,Y)
+pol1NeqPol2(X,Y) :- pol1EqF(X,Y) ^ pol2EqE(X,Y)
+pol1NeqPol2(X,Y) :- pol1EqF(X,Y) ^ pol2EqT(X,Y)
+pol1NeqPol2(X,Y) :- pol1EqE(X,Y) ^ pol2EqF(X,Y)
+pol1NeqPol2(X,Y) :- pol1EqE(X,Y) ^ pol2EqT(X,Y)
+pol1NeqPol2(X,Y) :- pol1EqT(X,Y) ^ pol2EqF(X,Y)
+pol1NeqPol2(X,Y) :- pol1EqT(X,Y) ^ pol2EqE(X,Y)
+condNeg(X,Y) :- fw_rs1F(X,Y) ^ fw_rs2F(X,Y)
+condNeg(X,Y) :- [![!fw_rs1T(X,Y) ^ !fw_rs2T(X,Y)]]
+cond(X,Y) :- !condNeg(X,Y)
+test(X,Y) :- !cond(X,Y)
+test(X,Y) :- !pol1NeqPol2(X,Y)
+check(m) :- test(X,Y)

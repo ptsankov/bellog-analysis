@@ -1,0 +1,25 @@
+pol1(X,Y) :- ticket_TF(X,Y)
+pol1(X,Y) :- !ticket_TF(X,Y)
+ticket_TF(X,Y) :- #ticket(X,Y)
+ticket_cache_TF(X,Y) :- #ticket_cache(X,Y)
+pol2(X,Y) :- ticket_TF(X,Y)
+pol2(X,Y) :- !ticket_TF(X,Y) ^ else(X,Y)
+else(X,Y) :- ticket_ts_notE(X,Y) ^ ticket_ts(X,Y)
+else(X,Y) :- !ticket_ts_notE(X,Y) ^ ticket_cache_TF(X,Y)
+ticket_ts_notE(X,Y) :- [#[![ticket_ts(X,Y) ^ !ticket_ts(X,Y)]]]
+pol1EqF(X,Y) :- [#[!pol1(X,Y)]]
+pol1EqE(X,Y) :- [![#[![pol1(X,Y) ^ !pol1(X,Y)]]]]
+pol1EqT(X,Y) :- #pol1(X,Y)
+pol2EqF(X,Y) :- [#[!pol2(X,Y)]]
+pol2EqE(X,Y) :- [![#[![pol2(X,Y) ^ !pol2(X,Y)]]]]
+pol2EqT(X,Y) :- #pol2(X,Y)
+pol1NeqPol2(X,Y) :- pol1EqF(X,Y) ^ pol2EqE(X,Y)
+pol1NeqPol2(X,Y) :- pol1EqF(X,Y) ^ pol2EqT(X,Y)
+pol1NeqPol2(X,Y) :- pol1EqE(X,Y) ^ pol2EqF(X,Y)
+pol1NeqPol2(X,Y) :- pol1EqE(X,Y) ^ pol2EqT(X,Y)
+pol1NeqPol2(X,Y) :- pol1EqT(X,Y) ^ pol2EqF(X,Y)
+pol1NeqPol2(X,Y) :- pol1EqT(X,Y) ^ pol2EqE(X,Y)
+cond(X,Y) :- !ticket_ts_notE(X,Y) ^ ticket_cache_TF(X,Y)
+test(X,Y) :- !cond(X,Y)
+test(X,Y) :- !pol1NeqPol2(X,Y)
+check(m) :- test(X,Y)
